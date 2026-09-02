@@ -291,7 +291,7 @@
 .hero__cutout {
   position: absolute;
   left: 50%;
-  bottom: 6%;
+  bottom: -10%;
   transform: translateX(-50%);
   width: 92%;
   max-width: 520px;
