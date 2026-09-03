@@ -6,7 +6,7 @@ export default function PetsHero() {
       <div className="pets-hero-content">
         <div className="pets-hero-text">
           <span className="eyebrow">PawBorrow</span>
-          <h1>
+          <h1 className="font-bold">
             Friends come with
             <br />
             four paws

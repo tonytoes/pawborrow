@@ -195,10 +195,6 @@
   height: 100%;
 }
 
-.pets-hero {
-  background: #f7f5f2;
-}
-
 .pets-nav {
   display: flex;
   align-items: center;

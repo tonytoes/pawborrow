@@ -7,6 +7,7 @@ import Tos from "@/pages/Tos";
 import Privacy from "@/pages/Privacy";
 import Booking from "@/pages/Booking";
 import Register from "@/pages/Register";
+import Contact from "@/pages/ContactPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -16,7 +17,8 @@ const router = createBrowserRouter([
   { path: "/booking", element: <Booking /> },
   { path: "/tos", element: <Tos /> },
   { path: "/privacy", element: <Privacy /> },
-  { path: "/register", element: <Register /> }
+  { path: "/register", element: <Register /> },
+  { path: "/contact", element: <Contact/>}
 ]);
 
 export default router;

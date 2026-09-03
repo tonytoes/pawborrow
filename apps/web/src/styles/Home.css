@@ -63,6 +63,12 @@
   padding-bottom: 56px;
 }
 
+.hero__art {
+  position: relative;
+  min-height: 380px;
+  bottom: -50px;
+}
+
 .hero__text h1 {
   font-size: 2.9rem;
   line-height: 1.12;

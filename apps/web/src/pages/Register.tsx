@@ -5,7 +5,7 @@ export default function Signup() {
         <div className="absolute inset-0 bg-[url('/images/featured-bella.jpg')] bg-cover bg-center bg-no-repeat">
           <div className="absolute inset-0 bg-[rgba(30,18,10,0.75)]">
             <div className="relative h-full flex flex-col justify-end p-1">
-              <div className="absolute top-0 left-0">
+              <div className="absolute top-0 left-0 px-5">
                 <a href="/">
                   <img
                     src="/images/PawBorrowLogo.png"
@@ -76,7 +76,6 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Email */}
             <div>
               <label className="mb-2 block font-body text-xs uppercase text-black">
                 Email
@@ -89,7 +88,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Phone Number */}
             <div>
               <label className="mb-2 block font-body text-xs uppercase text-black">
                 Phone Number{" "}
@@ -103,7 +101,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="mb-2 block font-body text-xs uppercase text-black">
                 Password
@@ -116,7 +113,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Confirm Password */}
             <div>
               <label className="mb-2 block font-body text-xs uppercase text-black">
                 Confirm Password
@@ -129,7 +125,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Create Account */}
             <button
               type="submit"
               className="h-[52px] w-full rounded-full bg-[#879b7b] text-sm font-normal uppercase text-white transition-colors hover:bg-[#748a68]"
@@ -138,7 +133,7 @@ export default function Signup() {
             </button>
           </form>
 
-          <p className="mt-5 px-2 text-center font-body text-[11px] leading-relaxed text-[#888]">
+          <p className="mt-2 px-2 text-center font-body text-[9px] leading-relaxed text-[#888]">
             By creating an account, you agree to our{" "}
             <a
               href="/tos"
@@ -157,7 +152,7 @@ export default function Signup() {
             .
           </p>
 
-          <p className="mt-8 text-center text-sm text-[#6f6f6f]">
+          <p className="mt-4 text-center text-sm text-[#6f6f6f]">
             Already have an account?{" "}
             <a
               href="/login"

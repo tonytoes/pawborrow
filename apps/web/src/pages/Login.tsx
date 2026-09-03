@@ -7,7 +7,7 @@ export default function Login() {
           <div className="absolute inset-0 bg-[url('/images/featured-bella.jpg')] bg-cover bg-center bg-no-repeat ">
             <div className="absolute inset-0 bg-[rgba(30,18,10,0.75)] d-flex flex-column justify-content-center">
               <div className="relative h-full flex flex-col justify-end p-1">
-                <div className="absolute top-0 left-0">
+                <div className="absolute top-0 left-0 px-4">
                   <a href="/">
                     <img
                       src="/images/PawBorrowLogo.png"
