@@ -3,6 +3,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import "@/styles/Home.css";
 import "@/styles/Button.css";
+import { span } from "framer-motion/m";
 
 type PawTileProps = {
   tone?: "coral" | "peach" | "sage" | "sand" | "ink";
@@ -16,24 +17,6 @@ type PhotoTileProps = {
   tone?: "coral" | "peach" | "sage" | "sand" | "ink";
   className?: string;
 };
-
-const POSTS = [
-  {
-    date: "24 May, 2024",
-    title: "First-Time Borrower? Here\u2019s What to Expect",
-    tone: "coral",
-  },
-  {
-    date: "24 May, 2024",
-    title: "How We Screen Every Companion Before Borrowing",
-    tone: "peach",
-  },
-  {
-    date: "24 May, 2024",
-    title: "Weekend With a Dog: A QC Student\u2019s Story",
-    tone: "sand",
-  },
-];
 
 const ITEMS = [
   {
@@ -130,7 +113,7 @@ export default function Home() {
       <FeaturedPets />
       <SecondaryHero />
       <Included />
-      <Stories />
+      <MobileApp />
       <Footer />
     </>
   );
@@ -341,23 +324,18 @@ function Included() {
   );
 }
 
-function Stories() {
+function MobileApp() {
   return (
-    <section className="section stories">
-      <h2>Stories & Tips</h2>
-
-      <div className="stories__grid">
-        {POSTS.map((post) => (
-          <a href="#" className="story-card" key={post.title}>
-            <div
-              className={`story-card__cover story-card__cover--${post.tone}`}
-            >
-              <span className="story-card__badge">News</span>
-            </div>
-            <p className="story-card__date">{post.date}</p>
-            <h3>{post.title}</h3>
-          </a>
-        ))}
+    <section className="mx-auto max-w-(--max-w) px-6 pt-14">
+      <div className="flex flex-row items-center justify-between gap-8">
+        <div className="flex flex-col"> 
+            <span className="text-6xl">Download Our</span>
+        <span className="text-6xl font-semibold">Mobile App</span>
+        <img src="/images/Googleplay.png" alt="Mobile app preview" className="mt-4 w-full max-w-sm shadow-lg" />
+      </div>
+        <div className="flex">
+          <img src="/images/mobile-hand2.png" alt="Mobile app preview" className="mt-4 w-full max-w-lg" />
+        </div>
       </div>
     </section>
   );

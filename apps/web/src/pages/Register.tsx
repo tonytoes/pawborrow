@@ -5,7 +5,7 @@ export default function Signup() {
         <div className="absolute inset-0 bg-[url('/images/featured-bella.jpg')] bg-cover bg-center bg-no-repeat">
           <div className="absolute inset-0 bg-[rgba(30,18,10,0.75)]">
             <div className="relative h-full flex flex-col justify-end p-1">
-              <div className="absolute top-0 left-0 px-5">
+              <div className="absolute top-0 left-0 px-4">
                 <a href="/">
                   <img
                     src="/images/PawBorrowLogo.png"
@@ -88,6 +88,7 @@ export default function Signup() {
               />
             </div>
 
+            {/*
             <div>
               <label className="mb-2 block font-body text-xs uppercase text-black">
                 Phone Number{" "}
@@ -100,6 +101,7 @@ export default function Signup() {
                 className="h-[46px] w-full rounded-xl border border-black bg-white px-4 py-3 font-body text-sm"
               />
             </div>
+            */}
 
             <div>
               <label className="mb-2 block font-body text-xs uppercase text-black">

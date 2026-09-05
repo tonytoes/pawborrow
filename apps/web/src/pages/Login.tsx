@@ -21,7 +21,7 @@ export default function Login() {
                     PawBorrow
                   </span>
                   <p className="mt-2 text-base text-white">
-                    You've got a friend in me.
+                    You've got a Paw in me.
                   </p>
 
                 </div>
