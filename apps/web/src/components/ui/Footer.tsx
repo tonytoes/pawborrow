@@ -12,11 +12,8 @@ export default function Footer() {
             Temporary pet companionship for Quezon City households — borrow the joy,
             skip the long-term commitment.
           </p>
-          <div className="footer__social" aria-label="Social links">
-            <a href="#" aria-label="Facebook">f</a>
+          <div className="footer__social" aria-label="Social link">
             <a href="#" aria-label="Instagram">ig</a>
-            <a href="#" aria-label="X">x</a>
-            <a href="#" aria-label="TikTok">tt</a>
           </div>
         </div>
 

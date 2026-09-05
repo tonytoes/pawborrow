@@ -28,11 +28,11 @@
 
 /* ---------- Navbar ---------- */
 .navbar {
-  border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
-  background: #fff;
+  padding: 16px 24px 0;
   z-index: 20;
+  background: transparent;
 }
 
 .navbar__inner {
@@ -40,8 +40,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding-top: 18px;
-  padding-bottom: 18px;
+  padding: 14px 22px;
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .navbar__logo {
@@ -445,6 +447,7 @@
 
 .section-hero .btn--dark {
   background: var(--ink);
+  border-radius: 10px;
 }
 
 /* ---------- Included / necessities ---------- */
@@ -717,4 +720,96 @@
   .about__team-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+.navbar__notif {
+  position: relative;
+}
+
+.navbar__notif-dropdown {
+  position: absolute;
+  top: calc(100% + 18px);
+  right: 0;
+  width: 300px;
+  max-height: 340px;
+  overflow-y: auto;
+  background: #fff;
+  border: 2px solid #F5C6C0;
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+  padding: 16px 0 4px;
+  z-index: 30;
+}
+
+.navbar__notif-arrow {
+  position: absolute;
+  top: -9px;
+  right: 22px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-left: 2px solid #F5C6C0;
+  border-top: 2px solid #F5C6C0;
+  transform: rotate(45deg);
+  border-radius: 3px 0 0 0;
+}
+
+.navbar__notif-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0 18px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.navbar__notif-empty {
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 16px 18px 4px;
+}
+
+.navbar__notif-dropdown ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar__notif-dropdown li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.navbar__notif-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.navbar__notif-avatar {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  background: var(--coral);
+  opacity: 0.55;
+}
+
+.navbar__notif-body {
+  flex: 1;
+}
+
+.navbar__notif-body p {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.navbar__notif-body p strong {
+  font-weight: 700;
+}
+
+.navbar__notif-time {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
 }
