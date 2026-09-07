@@ -40,15 +40,17 @@ export default function PetsGrid({
       </div>
 
       <div className="pets-pagination">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-          <button
+        <div className="pets-pagination-numbers">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+           <button
             key={num}
             className={num === page ? "active" : ""}
             onClick={() => onPageChange(num)}
           >
             {num}
           </button>
-        ))}
+          ))}
+        </div>
         <button
           className="pets-pagination-next"
           disabled={page === totalPages}
