@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
+import { useState } from 'react';
 import { cartOutline, searchOutline, home, pawOutline, cartOutline as shopIcon, timeOutline, personOutline } from 'ionicons/icons';
 import petsPhoto from '../assets/images/shop/pets.png';
 import foodsPhoto from '../assets/images/shop/foods.png';
@@ -20,6 +21,7 @@ const shopCategories = [
 
 const Shop = () => {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   return (
     <IonPage>
@@ -43,8 +45,12 @@ const Shop = () => {
           <div className="shop-grid">
             {shopCategories.map((cat) => (
               <div
-                className={`shop-card ${cat.id === 'healthy' ? 'shop-card--active' : ''}`}
+                className={`shop-card ${selectedCategory === cat.id ? 'shop-card--active' : ''}`}
                 key={cat.id}
+                onClick={() => {
+                  setSelectedCategory(cat.id);
+                  navigate(`/pet-category/${cat.id}`);
+                }}
               >
                 <span className="shop-card-label">{cat.label}</span>
                 <img src={cat.photo} alt={cat.label} />

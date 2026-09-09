@@ -5,9 +5,9 @@ import { categoryServices } from '../data/categoryServices';
 import './CategoryDetails.css';
 
 const CategoryDetails = () => {
-  const { categoryId } = useParams<{ categoryId: string }>();
-  const navigate = useNavigate();
-  const category = categoryServices.find((c) => c.id === categoryId);
+    const { categoryId } = useParams<{ categoryId: string }>();
+    const navigate = useNavigate();
+    const category = categoryServices.find((c) => c.id === categoryId);
 
   if (!category) {
     return (

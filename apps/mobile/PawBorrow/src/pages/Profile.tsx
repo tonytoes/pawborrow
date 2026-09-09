@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import {
   personOutline,
@@ -8,16 +9,19 @@ import {
   chevronForwardOutline,
 } from 'ionicons/icons';
 import avatar from '../assets/images/dashboard/avatar-sarah.png';
+import { useAuth } from '../context/AuthContext';
 import './Profile.css';
 
 const menuItems = [
-  { label: 'My Bookings', icon: personOutline },
-  { label: 'Payment Methods', icon: cardOutline },
-  { label: 'Notification Settings', icon: notificationsOutline },
-  { label: 'App Settings', icon: settingsOutline },
+  { label: 'My Bookings', icon: personOutline, path: '/my-bookings' },
+  { label: 'Payment Methods', icon: cardOutline, path: '/payment-methods' },
+  { label: 'Notification Settings', icon: notificationsOutline, path: '/notification-settings' },
+  { label: 'App Settings', icon: settingsOutline, path: '/app-settings' },
 ];
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   return (
     <IonPage>
       <IonContent fullscreen className="profile-content">
@@ -30,7 +34,7 @@ const Profile = () => {
 
           <div className="profile-menu">
             {menuItems.map((item) => (
-              <button className="profile-menu-item" key={item.label}>
+              <button className="profile-menu-item" key={item.label} onClick={() => navigate(item.path)}>
                 <span className="profile-menu-icon">
                   <IonIcon icon={item.icon} />
                 </span>
@@ -39,7 +43,7 @@ const Profile = () => {
               </button>
             ))}
 
-            <button className="profile-menu-item profile-menu-item--danger">
+            <button className="profile-menu-item profile-menu-item--danger" onClick={logout}>
               <span className="profile-menu-icon">
                 <IonIcon icon={logOutOutline} />
               </span>

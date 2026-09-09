@@ -67,19 +67,38 @@ import Training from './pages/Training';
 import History from './pages/History';
 import Profile from './pages/Profile';
 import BreedSelection from './pages/BreedSelection';
+import PetCategory from './pages/PetCategory';
+import BreedPets from './pages/BreedPets';
 import BottomNav from './components/BottomNav';
+import PetDetails from './pages/PetDetails';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { BookingsProvider } from './context/BookingsContext';
+import MyBookings from './pages/MyBookings';
+import PaymentMethods from './pages/PaymentMethods';
+import NotificationSettings from './pages/NotificationSettings';
+import AppSettings from './pages/AppSettings';
+import BookingConfirmation from './pages/BookingConfirmation';
+import BookingReview from './pages/BookingReview';
 
 setupIonicReact();
 
-const App: React.FC = () => {
+
+const App: React.FC = () => (
+  <AuthProvider>
+    <BookingsProvider>
+      <AppContent />
+    </BookingsProvider>
+  </AuthProvider>
+);
+
+const AppContent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, login } = useAuth();
 
   useEffect(() => {
-    const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-
+    const loadingTimer = setTimeout(() => 
+      setIsLoading(false)
+    , 3000);
     return () => clearTimeout(loadingTimer);
   }, []);
 
@@ -94,7 +113,7 @@ const App: React.FC = () => {
   if (!isLoggedIn) {
     return (
       <IonApp>
-        <Login onLoginSuccess={() => setIsLoggedIn(true)} />
+        <Login onLoginSuccess={login} />
       </IonApp>
     )
   }
@@ -112,7 +131,18 @@ const App: React.FC = () => {
         <Route path="/training" element={<Training />} />
         <Route path="/history" element={<History />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/pet-category" element={<PetCategory />} />
+        <Route path="/shop/pet-category/" element={<PetCategory />} />
+        <Route path="/pet-category/:categoryId" element={<PetCategory />} />
         <Route path="/breed-selection/:animalId" element={<BreedSelection />} />
+        <Route path="/dashboard/breed/:animalId/:breedId" element={<BreedPets />} />
+        <Route path="/dashboard/pet/:petId" element={<PetDetails />} />
+        <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/payment-methods" element={<PaymentMethods />} />
+        <Route path="/notification-settings" element={<NotificationSettings />} />
+        <Route path="/app-settings" element={<AppSettings />} />
+        <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+        <Route path="/booking-review" element={<BookingReview />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </IonRouterOutlet>
       <BottomNav />
@@ -120,6 +150,7 @@ const App: React.FC = () => {
   </IonApp>
 );
 };
+
 
 export const SplashScreen = (): JSX.Element => {
   return (

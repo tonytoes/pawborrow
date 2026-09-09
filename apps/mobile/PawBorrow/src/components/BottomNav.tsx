@@ -3,9 +3,7 @@ import { IonIcon } from '@ionic/react';
 import { home, pawOutline, cartOutline, timeOutline, personOutline } from 'ionicons/icons';
 import './BottomNav.css';
 
-// Only these routes show the bottom nav — everything else (Notifications,
-// DoctorDetails, CategoryDetails, Training) matches the design and has none
-const VISIBLE_ON = ['/dashboard', '/service', '/shop', '/history', '/profile'];
+const VISIBLE_ON = ['/dashboard', '/pet-category', '/shop', '/history', '/profile'];
 
 const BottomNav = () => {
   const location = useLocation();
@@ -18,19 +16,15 @@ const BottomNav = () => {
   return (
     <nav className="bottom-nav">
       <button
-        className={`bottom-nav-item ${location.pathname === '/dashboard' ? 'bottom-nav-item--active' : ''}`}
-        onClick={() => navigate('/dashboard')}
-      >
+        className={`bottom-nav-item ${location.pathname === '/dashboard' ? 'bottom-nav-item--active' : ''}`} onClick={() => navigate('/dashboard')}>
         <IonIcon icon={home} />
         <span>Home</span>
       </button>
 
       <button
-        className={`bottom-nav-item ${location.pathname === '/service' ? 'bottom-nav-item--active' : ''}`}
-        onClick={() => navigate('/service')}
-      >
+        className={`bottom-nav-item ${location.pathname === '/pet-category' ? 'bottom-nav-item--active' : ''}`} onClick={() => navigate('/pet-category')}>
         <IonIcon icon={pawOutline} />
-        <span>Service</span>
+        <span>Pets</span>
       </button>
 
       <button className="bottom-nav-fab" aria-label="Shop" onClick={() => navigate('/shop')}>
