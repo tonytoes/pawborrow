@@ -12,15 +12,13 @@ import {
 } from 'ionicons/icons';
 import { useNavigate } from 'react-router-dom';
 
-// Real photos — point these at your actual asset files
+
 import petsBanner from '../assets/images/dashboard/pets-banner.png';
 import vaccinationsPhoto from '../assets/images/service/vaccinations.png';
 import operationsPhoto from '../assets/images/service/operations.png';
 import behavioralsPhoto from '../assets/images/service/behaviorals.png';
 import dentistryPhoto from '../assets/images/service/dentistry.png';
 import groomingPhoto from '../assets/images/service/grooming.png';
-import drAnnaPhoto from '../assets/images/service/dr-anna-johanson.png';
-import drVernonPhoto from '../assets/images/service/dr-vernon-chwe.png';
 
 import './Service.css';
 import { specialists } from '../data/specialists';

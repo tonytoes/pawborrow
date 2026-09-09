@@ -35,7 +35,7 @@ const BreedSelection = () => {
 
           <div className="breed-grid">
             {category.breeds.map((breed) => (
-              <div className="breed-card" key={breed.id}>
+              <div className="breed-card" key={breed.id} onClick={() => navigate(`/dashboard/breed/${animalId}/${breed.id}`)}>
                 <img src={breed.photo} alt={breed.name} />
                 <span>{breed.name}</span>
               </div>

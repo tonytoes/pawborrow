@@ -47,10 +47,10 @@
   border: 1.5px solid #f5b98a;
   border-radius: 12px;
   background: #ffffff;
-  color: #1e1e1e;
+  color: #2b2a2a;
   font-size: clamp(0.85rem, 2vw, 1rem);
   outline: none;
-  -webkit-text-fill-color: #1e1e1e;
+  -webkit-text-fill-color: #2b2a2a;
   caret-color: #f5821f;
 }
 
