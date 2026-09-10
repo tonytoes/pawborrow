@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon, IonToggle } from '@ionic/react';
 import { chevronBackOutline } from 'ionicons/icons';
-import './NotificationSettings.css';
+import '../style/NotificationSettings.css';
 
 const initialSettings = [
   { id: 'booking-reminders', label: 'Booking Reminders', enabled: true },

@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { checkmarkCircle } from 'ionicons/icons';
 import type { Booking } from '../context/BookingsContext';
-import './BookingConfirmation.css';
+import '../style/BookingConfirmation.css';
 
 const BookingConfirmation = () => {
   const location = useLocation();

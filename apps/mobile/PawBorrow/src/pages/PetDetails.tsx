@@ -4,7 +4,7 @@ import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { chevronBackOutline, calendarOutline, locationOutline } from 'ionicons/icons';
 import { pets } from '../data/pets';
 import { useBookings } from '../context/BookingsContext';
-import './PetDetails.css';
+import '../style/PetDetails.css';
 
 const PetDetails = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -108,11 +108,6 @@ const PetDetails = () => {
               </button>
             ))}
           </div>
-
-          <button className="pet-details-location-btn">
-            <IonIcon icon={locationOutline} />
-            See Location
-          </button>
 
           <button className="pet-details-book-btn" onClick={handleBookNow}>
             Book Now

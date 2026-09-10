@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
-import { chevronBackOutline, calendarOutline, timeOutline } from 'ionicons/icons';
+import { chevronBackOutline, calendarOutline, timeOutline, cardOutline, chevronForwardOutline } from 'ionicons/icons';
 import { useBookings, Booking } from '../context/BookingsContext';
-import './BookingReview.css';
+import { mockCards } from '../data/paymentMethods';
+import '../style/BookingReview.css';
 
 type DraftBooking = Omit<Booking, 'id' | 'status'>;
 
@@ -11,6 +13,9 @@ const BookingReview = () => {
   const navigate = useNavigate();
   const { addBooking } = useBookings();
   const draft = location.state as DraftBooking | undefined;
+
+  const [selectedCardId, setSelectedCardId] = useState(mockCards[0]?.id ?? '');
+  const selectedCard = mockCards.find((c) => c.id === selectedCardId);
 
   if (!draft) {
     return (
@@ -26,7 +31,7 @@ const BookingReview = () => {
   }
 
   const handleConfirm = () => {
-    const booking = addBooking(draft);   // the booking is only created here, on explicit confirm
+    const booking = addBooking(draft);
     navigate('/booking-confirmation', { state: booking, replace: true });
   };
 
@@ -72,6 +77,24 @@ const BookingReview = () => {
             )}
           </div>
 
+          <p className="booking-review-section-title">Payment Method</p>
+          {mockCards.length === 0 ? (
+            <button className="booking-review-payment booking-review-payment--empty" onClick={() => navigate('/payment-methods')}>
+              <span className="booking-review-payment-icon"><IonIcon icon={cardOutline} /></span>
+              <span className="booking-review-payment-label">Add a payment method</span>
+              <IonIcon icon={chevronForwardOutline} className="booking-review-payment-arrow" />
+            </button>
+          ) : (
+            <button className="booking-review-payment" onClick={() => navigate('/payment-methods')}>
+              <span className="booking-review-payment-icon"><IonIcon icon={cardOutline} /></span>
+              <div className="booking-review-payment-info">
+                <p className="booking-review-payment-brand">{selectedCard?.brand}</p>
+                <p className="booking-review-payment-number">•••• {selectedCard?.last4}</p>
+              </div>
+              <IonIcon icon={chevronForwardOutline} className="booking-review-payment-arrow" />
+            </button>
+          )}
+
           <p className="booking-review-note">
             Please review your booking details carefully. You can go back to change the date or time before confirming.
           </p>
@@ -81,7 +104,7 @@ const BookingReview = () => {
           <button className="booking-review-cancel" onClick={() => navigate(-1)}>
             Back
           </button>
-          <button className="booking-review-confirm" onClick={handleConfirm}>
+          <button className="booking-review-confirm" onClick={handleConfirm} disabled={!selectedCard}>
             Confirm Booking
           </button>
         </div>

@@ -51,6 +51,12 @@
   color: #000;
 }
 
+.notifications-empty {
+  text-align: center;
+  color: #9a9a9a;
+  margin-top: 60px;
+}
+
 .notifications-card {
   background: #ffffff;
   border-radius: 20px;

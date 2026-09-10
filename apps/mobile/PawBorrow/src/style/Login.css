@@ -129,9 +129,14 @@
     margin-top: clamp(18px, 4vh, 50px);
 }
 
-.login-footer a {
+.login-terms-link {
+    background: transparent;
+    border: none;
+    padding: 0;
     color: #9a9a9a;
     text-decoration: underline;
+    cursor: pointer;
+    font: inherit;
 }
 
 @media (max-height: 640px) {

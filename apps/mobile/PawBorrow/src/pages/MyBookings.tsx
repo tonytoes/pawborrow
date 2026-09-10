@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { chevronBackOutline, calendarOutline, timeOutline } from 'ionicons/icons';
 import { useBookings } from '../context/BookingsContext';
-import './MyBookings.css';
+import '../style/MyBookings.css';
 
 const MyBookings = () => {
   const navigate = useNavigate();

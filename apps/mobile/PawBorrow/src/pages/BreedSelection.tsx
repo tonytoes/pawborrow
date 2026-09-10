@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { chevronBackOutline } from 'ionicons/icons';
 import { animalBreeds } from '../data/breeds';
-import './BreedSelection.css';
+import '../style/BreedSelection.css';
 
 const BreedSelection = () => {
   const { animalId } = useParams<{ animalId: string }>();

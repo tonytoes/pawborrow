@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { chevronBackOutline, searchOutline } from 'ionicons/icons';
 import { categoryServices } from '../data/categoryServices';
-import './CategoryDetails.css';
+import '../style/CategoryDetails.css';
 
 const CategoryDetails = () => {
     const { categoryId } = useParams<{ categoryId: string }>();
