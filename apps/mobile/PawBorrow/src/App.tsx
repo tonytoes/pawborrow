@@ -59,9 +59,6 @@ import logo from "./assets/images/logo.png";
 import "./App.css";
 import vector from "./assets/images/splash/vector.svg";
 import Dashboard from './pages/Dashboard';
-import Service from './pages/Service';
-import DoctorDetails from './pages/DoctorDetails';
-import CategoryDetails from './pages/CategoryDetails';
 import Shop from './pages/Shop';
 import Training from './pages/Training';
 import History from './pages/History';
@@ -71,6 +68,8 @@ import PetCategory from './pages/PetCategory';
 import BreedPets from './pages/BreedPets';
 import BottomNav from './components/BottomNav';
 import PetDetails from './pages/PetDetails';
+import AboutUs from './pages/AboutUs';
+import LikedPets from './pages/LikedPets';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { BookingsProvider } from './context/BookingsContext';
 import MyBookings from './pages/MyBookings';
@@ -79,6 +78,7 @@ import NotificationSettings from './pages/NotificationSettings';
 import AppSettings from './pages/AppSettings';
 import BookingConfirmation from './pages/BookingConfirmation';
 import BookingReview from './pages/BookingReview';
+import TermsOfService from './pages/TermsOfService';
 
 setupIonicReact();
 
@@ -113,9 +113,15 @@ const AppContent: React.FC = () => {
   if (!isLoggedIn) {
     return (
       <IonApp>
-        <Login onLoginSuccess={login} />
+        <IonReactRouter>
+          <IonRouterOutlet>
+            <Route path="/login" element={<Login onLoginSuccess={login} />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </IonRouterOutlet>
+        </IonReactRouter>
       </IonApp>
-    )
+    );
   }
 
   return (
@@ -124,13 +130,12 @@ const AppContent: React.FC = () => {
       <IonRouterOutlet>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/notification" element={<Notifications />} />
-        <Route path="/service" element={<Service />} />
-        <Route path="/service/doctor/:doctorId" element={<DoctorDetails />} />
-        <Route path="/service/category/:categoryId" element={<CategoryDetails />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/training" element={<Training />} />
         <Route path="/history" element={<History />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/liked-pets" element={<LikedPets />} />
+        <Route path="/about-us" element={<AboutUs />} />
         <Route path="/pet-category" element={<PetCategory />} />
         <Route path="/shop/pet-category/" element={<PetCategory />} />
         <Route path="/pet-category/:categoryId" element={<PetCategory />} />
@@ -143,6 +148,7 @@ const AppContent: React.FC = () => {
         <Route path="/app-settings" element={<AppSettings />} />
         <Route path="/booking-confirmation" element={<BookingConfirmation />} />
         <Route path="/booking-review" element={<BookingReview />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </IonRouterOutlet>
       <BottomNav />

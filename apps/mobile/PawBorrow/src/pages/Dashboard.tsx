@@ -10,8 +10,11 @@ import {
   personOutline,
 } from 'ionicons/icons';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import SearchBar from '../components/SearchBar';
+import { matchesSearch } from '../assets/images/utils/search';
 
-// Real photos — point these at your actual asset files
+
 import avatar from '../assets/images/dashboard/avatar-sarah.png';
 import petsBanner from '../assets/images/dashboard/pets-banner.png';
 import catPhoto from '../assets/images/dashboard/cat.png';
@@ -22,7 +25,7 @@ import bookNowPhoto from '../assets/images/dashboard/book-now.png';
 import communityPhoto from '../assets/images/dashboard/community.png';
 import trainingCardPhoto from '../assets/images/dashboard/training-card.png';
 
-import './Dashboard.css';
+import '../style/Dashboard.css';
 
 const categories = [
   { id: 'cat', label: 'Cat', photo: catPhoto },
@@ -33,6 +36,10 @@ const categories = [
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredCategories = categories.filter((cat) => matchesSearch(cat.label, searchTerm));
+
   return (
     <IonPage>
       <IonContent fullscreen className="dashboard-content">
@@ -50,10 +57,7 @@ export const Dashboard = () => {
             </button>
           </header>
 
-          <div className="dashboard-search">
-            <IonIcon icon={searchOutline} />
-            <input type="text" placeholder="search" />
-          </div>
+          <SearchBar value={searchTerm} onChange={setSearchTerm} placeholder="search" />
 
           <div className="dashboard-promo">
             <div className="dashboard-promo-text">
@@ -71,7 +75,7 @@ export const Dashboard = () => {
               <span className="dashboard-see-all">See All</span>
             </div>
             <div className="dashboard-categories">
-              {categories.map((cat) => (
+              {filteredCategories.map((cat) => (
                 <div className="dashboard-category" key={cat.id}
                   onClick={() => navigate(`/breed-selection/${cat.id}`)}
                   style={{ cursor: 'pointer' }}>
@@ -101,6 +105,19 @@ export const Dashboard = () => {
                 <button className="dashboard-card-btn">See More</button>
               </div>
               <img src={communityPhoto} alt="Community" />
+            </div>
+          </section>
+
+          <section className="dashboard-section">
+            <h2>About Us</h2>
+            <div className="dashboard-card">
+              <div className="dashboard-card-text">
+                <p>Meet the team behind PawBorrow and our pet-first mission.</p>
+                <button className="dashboard-card-btn" onClick={() => navigate('/about-us')}>
+                  See More
+                </button>
+              </div>
+              <img src={communityPhoto} alt="About us" />
             </div>
           </section>
 

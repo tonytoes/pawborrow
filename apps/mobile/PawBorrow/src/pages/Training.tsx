@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { chevronBackOutline, playOutline, star } from 'ionicons/icons';
 import { trainingCourses } from '../data/trainingCourses';
-import './Training.css';
+import '../style/Training.css';
 
 const Training = () => {
   const navigate = useNavigate();

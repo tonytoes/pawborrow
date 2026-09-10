@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IonIcon } from '@ionic/react';
-import { home, pawOutline, cartOutline, timeOutline, personOutline } from 'ionicons/icons';
+import { home, heartOutline, cartOutline, timeOutline, personOutline } from 'ionicons/icons';
 import './BottomNav.css';
 
-const VISIBLE_ON = ['/dashboard', '/pet-category', '/shop', '/history', '/profile'];
+const VISIBLE_ON = ['/dashboard', '/pet-category', '/liked-pets', '/shop', '/history', '/profile'];
 
 const BottomNav = () => {
   const location = useLocation();
@@ -22,9 +22,9 @@ const BottomNav = () => {
       </button>
 
       <button
-        className={`bottom-nav-item ${location.pathname === '/pet-category' ? 'bottom-nav-item--active' : ''}`} onClick={() => navigate('/pet-category')}>
-        <IonIcon icon={pawOutline} />
-        <span>Pets</span>
+        className={`bottom-nav-item ${location.pathname === '/liked-pets' ? 'bottom-nav-item--active' : ''}`} onClick={() => navigate('/liked-pets')}>
+        <IonIcon icon={heartOutline} />
+        <span>Liked</span>
       </button>
 
       <button className="bottom-nav-fab" aria-label="Shop" onClick={() => navigate('/shop')}>

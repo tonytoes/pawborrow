@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { IonContent, IonPage, IonIcon } from '@ionic/react';
 import { useState } from 'react';
+import SearchBar from '../components/SearchBar';
+import { matchesSearch } from '../assets/images/utils/search';
 import { cartOutline, searchOutline, home, pawOutline, cartOutline as shopIcon, timeOutline, personOutline } from 'ionicons/icons';
 import petsPhoto from '../assets/images/shop/pets.png';
 import foodsPhoto from '../assets/images/shop/foods.png';
@@ -8,7 +10,7 @@ import healthyPhoto from '../assets/images/shop/healthy.png';
 import toysPhoto from '../assets/images/shop/toys.png';
 import accessoriesPhoto from '../assets/images/shop/accessories.png';
 import clothesPhoto from '../assets/images/shop/clothes.png';
-import './Shop.css';
+import '../style/Shop.css';
 
 const shopCategories = [
   { id: 'pets', label: 'Pets', photo: petsPhoto },
@@ -22,6 +24,7 @@ const shopCategories = [
 const Shop = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
     <IonPage>
@@ -37,10 +40,7 @@ const Shop = () => {
         </div>
 
         <div className="shop">
-          <div className="shop-search">
-            <input type="text" placeholder="Search Something Here..." />
-            <IonIcon icon={searchOutline} />
-          </div>
+          <SearchBar value={searchTerm} onChange={setSearchTerm} placeholder="Search for products..." />
 
           <div className="shop-grid">
             {shopCategories.map((cat) => (
