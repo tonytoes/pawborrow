@@ -1,14 +1,23 @@
 import {
-  Users,
+  CartesianGrid,
+  Line,
   LineChart,
-  CheckCircle2,
-  PawPrint,
-} from "lucide-react";
-import { useDashboard } from "@repo/api";
-import Header from "../components/Header";
-import StatCard from "../components/StatCard";
-import DailySalesChart from "../components/DailySalesChart";
-import PetsBreakdown from "../components/PetsBreakdown";
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+interface DailySale {
+  date: string;
+  sales: number;
+}
+
+interface DailySalesChartProps {
+  data: DailySale[];
+  totalSales: number;
+  dateRange: string;
+}
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("en-PH", {
@@ -19,109 +28,126 @@ function formatCurrency(value: number): string {
   }).format(value);
 }
 
-export default function Dashboard() {
-  const {
-    data: dashboard,
-    isLoading,
-    error,
-    refetch,
-    isFetching,
-  } = useDashboard();
+function formatDate(date: string): string {
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return parsedDate.toLocaleDateString("en-PH", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+export default function DailySalesChart({
+  data,
+  totalSales,
+  dateRange,
+}: DailySalesChartProps) {
+  const chartData = data.map((item) => ({
+    ...item,
+    displayDate: formatDate(item.date),
+  }));
 
   return (
-    <div className="flex-1 bg-gray-50">
-      <Header title="DASHBOARD" />
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      {/* Header */}
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h2 className="text-base font-bold text-gray-800">Daily Sales</h2>
 
-      <div className="p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">
-              Dashboard Overview
-            </h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Live information from the PawBorrow database.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isFetching ? "Refreshing..." : "Refresh"}
-          </button>
+          <p className="mt-1 text-xs text-gray-400">{dateRange}</p>
         </div>
 
-        {isLoading && (
-          <div className="flex min-h-72 items-center justify-center">
-            <p className="text-sm text-gray-500">
-              Loading dashboard...
-            </p>
-          </div>
-        )}
+        <div className="text-right">
+          <p className="text-xs text-gray-400">Total Sales</p>
 
-        {error && (
-          <div
-            className="mb-6 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600"
-            role="alert"
-          >
-            {error instanceof Error
-              ? error.message
-              : "Failed to load dashboard data."}
-          </div>
-        )}
-
-        {!isLoading && !error && dashboard && (
-          <>
-            <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard
-                icon={Users}
-                value={dashboard.visitors.toLocaleString()}
-                label="Customers"
-                colorClass="bg-orange-400"
-              />
-
-              <StatCard
-                icon={LineChart}
-                value={formatCurrency(
-                  dashboard.totalSales,
-                )}
-                label="Sales"
-                colorClass="bg-sky-400"
-              />
-
-              <StatCard
-                icon={CheckCircle2}
-                value={dashboard.bookings.toLocaleString()}
-                label="Bookings"
-                colorClass="bg-emerald-400"
-              />
-
-              <StatCard
-                icon={PawPrint}
-                value={dashboard.pets.toLocaleString()}
-                label="Pets"
-                colorClass="bg-indigo-400"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <DailySalesChart
-                data={dashboard.dailySales}
-                totalSales={dashboard.totalSales}
-                dateRange={dashboard.salesDateRange}
-              />
-
-              <PetsBreakdown
-                data={dashboard.petBreakdown}
-                totalPets={dashboard.availablePets}
-              />
-            </div>
-          </>
-        )}
+          <p className="mt-1 text-lg font-bold text-gray-800">
+            {formatCurrency(totalSales)}
+          </p>
+        </div>
       </div>
+
+      {/* Empty state */}
+      {chartData.length === 0 ? (
+        <div className="flex h-72 items-center justify-center">
+          <p className="text-sm text-gray-400">No sales data available.</p>
+        </div>
+      ) : (
+        <div className="h-72 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{
+                top: 10,
+                right: 10,
+                left: 0,
+                bottom: 10,
+              }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#E5E7EB"
+              />
+
+              <XAxis
+                dataKey="displayDate"
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fill: "#9CA3AF",
+                  fontSize: 11,
+                }}
+                tickMargin={10}
+              />
+
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fill: "#9CA3AF",
+                  fontSize: 11,
+                }}
+                tickFormatter={(value: number) => `₱${value.toLocaleString()}`}
+                width={65}
+              />
+
+              <Tooltip
+                cursor={{
+                  stroke: "#D1D5DB",
+                  strokeDasharray: "4 4",
+                }}
+                formatter={(value) => [formatCurrency(Number(value)), "Sales"]}
+                labelFormatter={(label) => `Date: ${label}`}
+                contentStyle={{
+                  borderRadius: "12px",
+                  border: "1px solid #E5E7EB",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+                }}
+              />
+
+              <Line
+                type="monotone"
+                dataKey="sales"
+                stroke="#F97316"
+                strokeWidth={3}
+                dot={{
+                  r: 4,
+                  fill: "#F97316",
+                  strokeWidth: 2,
+                  stroke: "#FFFFFF",
+                }}
+                activeDot={{
+                  r: 6,
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 }
