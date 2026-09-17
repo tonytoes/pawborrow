@@ -119,7 +119,7 @@ const SignUp = () => {
                 <img
                   src={logo}
                   alt="PawBorrow"
-                  className="h-auto w-[240px] object-contain"
+                  className="h-auto w-60 object-contain"
                 />
               </div>
             </div>
@@ -434,7 +434,7 @@ const SignUp = () => {
                   mt-7
                   h-11
                   w-full
-                  rounded-[12px]
+                  rounded-xl
                   bg-[#f58220]
                   text-sm
                   font-bold
@@ -464,7 +464,7 @@ const SignUp = () => {
                   items-center
                   justify-center
                   gap-2
-                  rounded-[12px]
+                  rounded-xl
                   bg-[#f58220]
                   text-sm
                   font-bold
