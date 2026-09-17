@@ -1,4 +1,5 @@
 import { Routes, Route, Outlet } from "react-router-dom";
+import type { ComponentType } from "react";
 
 import Sidebar from "./components/Sidebar";
 import ProtectedRoute from "./router/ProtectedRoute";
@@ -11,6 +12,8 @@ import Pets from "./pages/Pets";
 import Order from "./pages/Order";
 import Reviews from "./pages/Reviews";
 import './global.css'
+
+const DashboardRoute = Dashboard as unknown as ComponentType;
 
 function App() {
   return (
@@ -29,7 +32,7 @@ function App() {
             </div>
           }
         >
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<DashboardRoute />} />
           <Route path="/users" element={<Users />} />
           <Route
             path="/bookings"
