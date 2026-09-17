@@ -1,170 +1,181 @@
 import {
-  CartesianGrid,
-  Line,
+  Users,
   LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  CheckCircle2,
+  PawPrint,
+} from "lucide-react";
 
-interface DailySale {
-  date: string;
-  sales: number;
+import { useDashboard } from "@repo/api";
+
+import Header from "../components/Header";
+import StatCard from "../components/StatCard";
+import DailySalesChart from "../components/DailySalesChart";
+import PetsBreakdown from "../components/PetsBreakdown";
+
+function safeNumber(
+  value: number | null | undefined,
+): number {
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : 0;
 }
 
-interface DailySalesChartProps {
-  data?: DailySale[] | null;
-  totalSales?: number | null;
-  dateRange?: string | null;
-}
-
-function formatCurrency(value: number): string {
-  const safeValue = Number.isFinite(value) ? value : 0;
-
+function formatCurrency(
+  value: number | null | undefined,
+): string {
   return new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(safeValue);
+  }).format(safeNumber(value));
 }
 
-function formatDate(date: string): string {
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return date;
+function getErrorMessage(error: unknown): string {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
   }
 
-  return parsedDate.toLocaleDateString("en-PH", {
-    month: "short",
-    day: "numeric",
-  });
+  return "Failed to load dashboard data.";
 }
 
-export default function DailySalesChart({
-  data = [],
-  totalSales = 0,
-  dateRange = "",
-}: DailySalesChartProps) {
-  const chartData = Array.isArray(data)
-    ? data.map((item) => ({
-        ...item,
-        displayDate: formatDate(item.date),
-      }))
+export default function Dashboard() {
+  const {
+    data: dashboard,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+  } = useDashboard();
+
+  const dailySales = Array.isArray(dashboard?.dailySales)
+    ? dashboard.dailySales
+    : [];
+
+  const petBreakdown = Array.isArray(dashboard?.petBreakdown)
+    ? dashboard.petBreakdown
     : [];
 
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h2 className="text-base font-bold text-gray-800">
-            Daily Sales
-          </h2>
+    <div className="flex-1 bg-gray-50">
+      <Header title="DASHBOARD" />
 
-          <p className="mt-1 text-xs text-gray-400">
-            {dateRange ?? ""}
-          </p>
+      <div className="p-4 sm:p-8">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">
+              Dashboard Overview
+            </h1>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Live information from the PawBorrow database.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            disabled={isFetching}
+            className="self-start rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isFetching ? "Refreshing..." : "Refresh"}
+          </button>
         </div>
 
-        <div className="text-right">
-          <p className="text-xs text-gray-400">
-            Total Sales
-          </p>
+        {isLoading && !dashboard && (
+          <div
+            className="flex min-h-72 items-center justify-center"
+            role="status"
+          >
+            <p className="text-sm text-gray-500">
+              Loading dashboard...
+            </p>
+          </div>
+        )}
 
-          <p className="mt-1 text-lg font-bold text-gray-800">
-            {formatCurrency(totalSales ?? 0)}
-          </p>
-        </div>
+        {isError && (
+          <div
+            className="mb-6 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600"
+            role="alert"
+          >
+            <p>{getErrorMessage(error)}</p>
+
+            {dashboard && (
+              <p className="mt-1">
+                Showing previously loaded data. Click Refresh to try
+                again.
+              </p>
+            )}
+          </div>
+        )}
+
+        {!isLoading && !isError && !dashboard && (
+          <div className="flex min-h-72 items-center justify-center">
+            <p className="text-sm text-gray-500">
+              No dashboard data was returned.
+            </p>
+          </div>
+        )}
+
+        {dashboard && (
+          <>
+            <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                icon={Users}
+                value={safeNumber(
+                  dashboard.visitors,
+                ).toLocaleString("en-PH")}
+                label="Customers"
+                colorClass="bg-orange-400"
+              />
+
+              <StatCard
+                icon={LineChart}
+                value={formatCurrency(dashboard.totalSales)}
+                label="Sales"
+                colorClass="bg-sky-400"
+              />
+
+              <StatCard
+                icon={CheckCircle2}
+                value={safeNumber(
+                  dashboard.bookings,
+                ).toLocaleString("en-PH")}
+                label="Bookings"
+                colorClass="bg-emerald-400"
+              />
+
+              <StatCard
+                icon={PawPrint}
+                value={safeNumber(
+                  dashboard.pets,
+                ).toLocaleString("en-PH")}
+                label="Pets"
+                colorClass="bg-indigo-400"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <DailySalesChart
+                data={dailySales}
+                totalSales={safeNumber(dashboard.totalSales)}
+                dateRange={dashboard.salesDateRange ?? ""}
+              />
+
+              <PetsBreakdown
+                data={petBreakdown}
+                totalPets={safeNumber(dashboard.availablePets)}
+              />
+            </div>
+          </>
+        )}
       </div>
-
-      {/* Empty state */}
-      {chartData.length === 0 ? (
-        <div className="flex h-72 items-center justify-center">
-          <p className="text-sm text-gray-400">
-            No sales data available.
-          </p>
-        </div>
-      ) : (
-        <div className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{
-                top: 10,
-                right: 10,
-                left: 0,
-                bottom: 10,
-              }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#E5E7EB"
-              />
-
-              <XAxis
-                dataKey="displayDate"
-                axisLine={false}
-                tickLine={false}
-                tick={{
-                  fill: "#9CA3AF",
-                  fontSize: 11,
-                }}
-                tickMargin={10}
-              />
-
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{
-                  fill: "#9CA3AF",
-                  fontSize: 11,
-                }}
-                tickFormatter={(value: number) =>
-                  `₱${value.toLocaleString()}`
-                }
-                width={65}
-              />
-
-              <Tooltip
-                cursor={{
-                  stroke: "#D1D5DB",
-                  strokeDasharray: "4 4",
-                }}
-                formatter={(value) => [
-                  formatCurrency(Number(value)),
-                  "Sales",
-                ]}
-                labelFormatter={(label) => `Date: ${label}`}
-                contentStyle={{
-                  borderRadius: "12px",
-                  border: "1px solid #E5E7EB",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
-                }}
-              />
-
-              <Line
-                type="monotone"
-                dataKey="sales"
-                stroke="#F97316"
-                strokeWidth={3}
-                dot={{
-                  r: 4,
-                  fill: "#F97316",
-                  strokeWidth: 2,
-                  stroke: "#FFFFFF",
-                }}
-                activeDot={{
-                  r: 6,
-                }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
     </div>
   );
 }
