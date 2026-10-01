@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Pencil,
@@ -35,9 +34,23 @@ type EditForm = {
   is_active: boolean;
 };
 
+type UserFilter =
+  | "all"
+  | "active"
+  | "inactive"
+  | "customer"
+  | "admin";
+
 type AdminUserAction =
-  | { action: "edit"; userId: string; updates: EditForm }
-  | { action: "delete"; userId: string };
+  | {
+      action: "edit";
+      userId: string;
+      updates: EditForm;
+    }
+  | {
+      action: "delete";
+      userId: string;
+    };
 
 function displayName(user: UserProfile): string {
   return (
@@ -57,19 +70,25 @@ async function runAdminUserAction(body: AdminUserAction) {
 
     if (error.context instanceof Response) {
       try {
-        const details = (await error.context.json()) as { error?: string };
+        const details = (await error.context.json()) as {
+          error?: string;
+        };
+
         if (typeof details.error === "string") {
           message = details.error;
         }
       } catch {
-        // Use the Supabase error message.
+        // Use the original Supabase error message.
       }
     }
 
     throw new Error(message);
   }
 
-  return data as { success?: boolean; user?: UserProfile } | null;
+  return data as {
+    success?: boolean;
+    user?: UserProfile;
+  } | null;
 }
 
 export default function Users() {
@@ -83,9 +102,15 @@ export default function Users() {
 
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [userFilter, setUserFilter] =
+    useState<UserFilter>("all");
 
-  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+  const [selected, setSelected] =
+    useState<Set<string>>(new Set());
+
+  const [editingUser, setEditingUser] =
+    useState<UserProfile | null>(null);
+
   const [editForm, setEditForm] = useState<EditForm>({
     first_name: "",
     last_name: "",
@@ -94,15 +119,30 @@ export default function Users() {
   });
 
   const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] =
+    useState<string | null>(null);
   const [actionError, setActionError] = useState("");
 
   const filteredUsers = useMemo(() => {
     const search = searchTerm.trim().toLowerCase();
 
-    if (!search) return users;
-
     return users.filter((user) => {
+      const matchesFilter =
+        userFilter === "all" ||
+        (userFilter === "active" && user.is_active) ||
+        (userFilter === "inactive" && !user.is_active) ||
+        (userFilter === "customer" &&
+          user.role === "customer") ||
+        (userFilter === "admin" && user.role === "admin");
+
+      if (!matchesFilter) {
+        return false;
+      }
+
+      if (!search) {
+        return true;
+      }
+
       const searchableText = [
         displayName(user),
         user.first_name ?? "",
@@ -118,11 +158,34 @@ export default function Users() {
 
       return searchableText.includes(search);
     });
-  }, [users, searchTerm]);
+  }, [users, searchTerm, userFilter]);
+
+  const filterCounts = useMemo(
+    () => ({
+      all: users.length,
+
+      active: users.filter(
+        (user) => user.is_active
+      ).length,
+
+      inactive: users.filter(
+        (user) => !user.is_active
+      ).length,
+
+      customer: users.filter(
+        (user) => user.role === "customer"
+      ).length,
+
+      admin: users.filter(
+        (user) => user.role === "admin"
+      ).length,
+    }),
+    [users]
+  );
 
   useEffect(() => {
     setPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, userFilter]);
 
   const totalPages = Math.max(
     1,
@@ -136,11 +199,17 @@ export default function Users() {
   }, [page, totalPages]);
 
   const start = (page - 1) * PAGE_SIZE;
-  const pageRows = filteredUsers.slice(start, start + PAGE_SIZE);
+
+  const pageRows = filteredUsers.slice(
+    start,
+    start + PAGE_SIZE
+  );
 
   const allOnPageSelected =
     pageRows.length > 0 &&
-    pageRows.every((user) => selected.has(user.id));
+    pageRows.every((user) =>
+      selected.has(user.id)
+    );
 
   function toggleRow(id: string) {
     setSelected((current) => {
@@ -184,10 +253,14 @@ export default function Users() {
     setEditingUser(user);
   }
 
-  async function saveEdit(event: FormEvent<HTMLFormElement>) {
+  async function saveEdit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
-    if (!editingUser || saving) return;
+    if (!editingUser || saving) {
+      return;
+    }
 
     setSaving(true);
     setActionError("");
@@ -200,14 +273,18 @@ export default function Users() {
       });
 
       if (!result?.user) {
-        throw new Error("The user was not updated.");
+        throw new Error(
+          "The user was not updated."
+        );
       }
 
       await refetch();
       setEditingUser(null);
     } catch (cause) {
       setActionError(
-        cause instanceof Error ? cause.message : "Could not save user."
+        cause instanceof Error
+          ? cause.message
+          : "Could not save user."
       );
     } finally {
       setSaving(false);
@@ -215,13 +292,20 @@ export default function Users() {
   }
 
   async function deleteUser(user: UserProfile) {
-    if (deletingId || user.role === "admin") return;
+    if (
+      deletingId ||
+      user.role === "admin"
+    ) {
+      return;
+    }
 
     const confirmed = window.confirm(
       `Permanently delete ${user.email}? Their bookings, payments, reviews, notifications, addresses, and likes will also be deleted. This cannot be undone.`
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     setDeletingId(user.id);
     setActionError("");
@@ -233,7 +317,9 @@ export default function Users() {
       });
 
       if (result?.success !== true) {
-        throw new Error("The user was not deleted.");
+        throw new Error(
+          "The user was not deleted."
+        );
       }
 
       setSelected((current) => {
@@ -245,7 +331,9 @@ export default function Users() {
       await refetch();
     } catch (cause) {
       setActionError(
-        cause instanceof Error ? cause.message : "Could not delete user."
+        cause instanceof Error
+          ? cause.message
+          : "Could not delete user."
       );
     } finally {
       setDeletingId(null);
@@ -257,75 +345,113 @@ export default function Users() {
       <Header title="USERS" />
 
       <div className="p-8">
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-base font-bold text-gray-800">
-                Users List
-              </h2>
-              <p className="mt-1 text-xs text-gray-400">
-                Search and manage PawBorrow users.
-              </p>
-            </div>
+        {/* Page title */}
+        <div className="mb-5">
+          <h2 className="text-base font-bold text-gray-800">
+            Users List
+          </h2>
 
-            <div className="relative w-full max-w-sm">
-              <Search
-                size={17}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
+          <p className="mt-1 text-xs text-gray-400">
+            Search and manage PawBorrow users.
+          </p>
+        </div>
 
-              <input
-                type="search"
-                value={searchTerm}
-                placeholder="Search users..."
-                aria-label="Search users"
-                className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-12 text-sm text-gray-700 outline-none transition placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                onChange={(event) => setSearchTerm(event.target.value)}
-              />
+        {/* Search card */}
+        <div className="mb-5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+          <div className="relative w-full max-w-md">
+            <Search
+              size={17}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
 
-              {searchTerm && (
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400 hover:text-gray-700"
-                  onClick={() => setSearchTerm("")}
-                >
-                  Clear
-                </button>
-              )}
-            </div>
+            <input
+              type="search"
+              value={searchTerm}
+              placeholder="Search by name, email, phone, role, or status..."
+              aria-label="Search users"
+              className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-12 text-sm text-gray-700 outline-none transition placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+              onChange={(event) =>
+                setSearchTerm(event.target.value)
+              }
+            />
+
+            {searchTerm && (
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400 hover:text-gray-700"
+                onClick={() => setSearchTerm("")}
+              >
+                Clear
+              </button>
+            )}
           </div>
 
+          <p className="mt-2 text-xs text-gray-400">
+            Showing {filteredUsers.length} of{" "}
+            {users.length} users
+          </p>
+        </div>
+
+        {/* Users table card */}
+        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
           {isLoading && (
-            <p className="text-sm text-gray-500">Loading users…</p>
+            <p className="text-sm text-gray-500">
+              Loading users…
+            </p>
           )}
 
           {isError && (
             <p className="text-sm text-rose-500">
               Couldn&apos;t load users:{" "}
-              {error instanceof Error ? error.message : "Unknown error"}
+              {error instanceof Error
+                ? error.message
+                : "Unknown error"}
             </p>
           )}
 
           {actionError && !editingUser && (
-            <p role="alert" className="mb-4 text-sm text-rose-600">
+            <p
+              role="alert"
+              className="mb-4 text-sm text-rose-600"
+            >
               {actionError}
             </p>
           )}
 
           {!isLoading && !isError && (
             <>
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600"
+              {/* Working filter */}
+              <div className="mb-4">
+                <select
+                  value={userFilter}
+                  onChange={(event) =>
+                    setUserFilter(
+                      event.target.value as UserFilter
+                    )
+                  }
+                  aria-label="Filter users"
+                  className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
                 >
-                  All ({users.length})
-                  <ChevronDown size={14} />
-                </button>
+                  <option value="all">
+                    All ({filterCounts.all})
+                  </option>
 
-                <p className="text-xs text-gray-400">
-                  Showing {filteredUsers.length} of {users.length} users
-                </p>
+                  <option value="active">
+                    Active ({filterCounts.active})
+                  </option>
+
+                  <option value="inactive">
+                    Inactive ({filterCounts.inactive})
+                  </option>
+
+                  <option value="customer">
+                    Customer ({filterCounts.customer})
+                  </option>
+
+                  <option value="admin">
+                    Admin ({filterCounts.admin})
+                  </option>
+                </select>
               </div>
 
               {filteredUsers.length === 0 ? (
@@ -342,7 +468,9 @@ export default function Users() {
                   <p className="mt-1 text-xs text-gray-400">
                     {searchTerm
                       ? `No users match "${searchTerm}".`
-                      : "There are no registered users."}
+                      : userFilter !== "all"
+                        ? "No users match the selected filter."
+                        : "There are no registered users."}
                   </p>
                 </div>
               ) : (
@@ -354,19 +482,40 @@ export default function Users() {
                           <th className="w-10 py-3">
                             <input
                               type="checkbox"
-                              checked={allOnPageSelected}
-                              onChange={toggleAllOnPage}
+                              checked={
+                                allOnPageSelected
+                              }
+                              onChange={
+                                toggleAllOnPage
+                              }
                               className="h-4 w-4 rounded border-gray-300"
                               aria-label="Select all users on this page"
                             />
                           </th>
 
-                          <th className="py-3 font-semibold">Name</th>
-                          <th className="py-3 font-semibold">Email</th>
-                          <th className="py-3 font-semibold">Phone</th>
-                          <th className="py-3 font-semibold">Status</th>
-                          <th className="py-3 font-semibold">Role</th>
-                          <th className="py-3 font-semibold">Actions</th>
+                          <th className="py-3 font-semibold">
+                            Name
+                          </th>
+
+                          <th className="py-3 font-semibold">
+                            Email
+                          </th>
+
+                          <th className="py-3 font-semibold">
+                            Phone
+                          </th>
+
+                          <th className="py-3 font-semibold">
+                            Status
+                          </th>
+
+                          <th className="py-3 font-semibold">
+                            Role
+                          </th>
+
+                          <th className="py-3 font-semibold">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
 
@@ -379,10 +528,16 @@ export default function Users() {
                             <td className="py-4">
                               <input
                                 type="checkbox"
-                                checked={selected.has(user.id)}
-                                onChange={() => toggleRow(user.id)}
+                                checked={selected.has(
+                                  user.id
+                                )}
+                                onChange={() =>
+                                  toggleRow(user.id)
+                                }
                                 className="h-4 w-4 rounded border-gray-300"
-                                aria-label={`Select ${displayName(user)}`}
+                                aria-label={`Select ${displayName(
+                                  user
+                                )}`}
                               />
                             </td>
 
@@ -406,7 +561,9 @@ export default function Users() {
                                     : "bg-gray-200 text-gray-500"
                                 }`}
                               >
-                                {user.is_active ? "Active" : "Inactive"}
+                                {user.is_active
+                                  ? "Active"
+                                  : "Inactive"}
                               </span>
                             </td>
 
@@ -422,8 +579,13 @@ export default function Users() {
                               <div className="flex items-center gap-2 whitespace-nowrap">
                                 <button
                                   type="button"
-                                  onClick={() => openEdit(user)}
-                                  disabled={saving || deletingId !== null}
+                                  onClick={() =>
+                                    openEdit(user)
+                                  }
+                                  disabled={
+                                    saving ||
+                                    deletingId !== null
+                                  }
                                   className="inline-flex items-center gap-1 rounded-lg border border-sky-200 px-2 py-1 text-xs font-medium text-sky-600 hover:bg-sky-50 disabled:opacity-50"
                                 >
                                   <Pencil size={13} />
@@ -432,7 +594,9 @@ export default function Users() {
 
                                 <button
                                   type="button"
-                                  onClick={() => void deleteUser(user)}
+                                  onClick={() =>
+                                    void deleteUser(user)
+                                  }
                                   disabled={
                                     saving ||
                                     deletingId !== null ||
@@ -446,6 +610,7 @@ export default function Users() {
                                   className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
                                 >
                                   <Trash2 size={13} />
+
                                   {deletingId === user.id
                                     ? "Deleting…"
                                     : "Delete"}
@@ -473,7 +638,10 @@ export default function Users() {
                         type="button"
                         onClick={() =>
                           setPage((current) =>
-                            Math.max(1, current - 1)
+                            Math.max(
+                              1,
+                              current - 1
+                            )
                           )
                         }
                         disabled={page === 1}
@@ -491,10 +659,15 @@ export default function Users() {
                         type="button"
                         onClick={() =>
                           setPage((current) =>
-                            Math.min(totalPages, current + 1)
+                            Math.min(
+                              totalPages,
+                              current + 1
+                            )
                           )
                         }
-                        disabled={page === totalPages}
+                        disabled={
+                          page === totalPages
+                        }
                         className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 disabled:opacity-40"
                         aria-label="Next page"
                       >
@@ -509,10 +682,13 @@ export default function Users() {
         </div>
       </div>
 
+      {/* Edit user modal */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <form
-            onSubmit={(event) => void saveEdit(event)}
+            onSubmit={(event) =>
+              void saveEdit(event)
+            }
             role="dialog"
             aria-modal="true"
             aria-labelledby="edit-user-title"
@@ -527,6 +703,7 @@ export default function Users() {
 
             <label className="mb-3 block text-sm text-gray-700">
               First name
+
               <input
                 autoFocus
                 value={editForm.first_name}
@@ -534,7 +711,8 @@ export default function Users() {
                 onChange={(event) =>
                   setEditForm({
                     ...editForm,
-                    first_name: event.target.value,
+                    first_name:
+                      event.target.value,
                   })
                 }
                 className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 outline-none focus:border-sky-400"
@@ -543,13 +721,15 @@ export default function Users() {
 
             <label className="mb-3 block text-sm text-gray-700">
               Last name
+
               <input
                 value={editForm.last_name}
                 maxLength={80}
                 onChange={(event) =>
                   setEditForm({
                     ...editForm,
-                    last_name: event.target.value,
+                    last_name:
+                      event.target.value,
                   })
                 }
                 className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 outline-none focus:border-sky-400"
@@ -558,6 +738,7 @@ export default function Users() {
 
             <label className="mb-3 block text-sm text-gray-700">
               Phone
+
               <input
                 type="tel"
                 value={editForm.phone}
@@ -574,6 +755,7 @@ export default function Users() {
 
             <label className="mb-3 block text-sm text-gray-700">
               Email (read only)
+
               <input
                 type="email"
                 value={editingUser.email ?? ""}
@@ -589,15 +771,20 @@ export default function Users() {
                 onChange={(event) =>
                   setEditForm({
                     ...editForm,
-                    is_active: event.target.checked,
+                    is_active:
+                      event.target.checked,
                   })
                 }
               />
+
               Active
             </label>
 
             {actionError && (
-              <p role="alert" className="mb-3 text-sm text-red-600">
+              <p
+                role="alert"
+                className="mb-3 text-sm text-red-600"
+              >
                 {actionError}
               </p>
             )}
@@ -620,7 +807,9 @@ export default function Users() {
                 disabled={saving}
                 className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
               >
-                {saving ? "Saving…" : "Save changes"}
+                {saving
+                  ? "Saving…"
+                  : "Save changes"}
               </button>
             </div>
           </form>
